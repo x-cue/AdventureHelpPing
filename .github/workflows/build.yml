@@ -4,16 +4,14 @@
 # against bad commits.
 
 name: build
-on: [pull_request, push]
+on: [release]
 
 jobs:
   build:
     strategy:
       matrix:
         # Use these Java versions
-        java: [
-          21,    # Current Java LTS
-        ]
+        java: [21]
     runs-on: ubuntu-22.04
     steps:
       - name: checkout repository

@@ -36,7 +36,8 @@ public final class AdventureSession {
             return;
         }
 
-        isOnCosmicSky = info.address.equalsIgnoreCase("cosmicsky.net") && info.name.equalsIgnoreCase("cosmic sky");
+        isOnCosmicSky = true;
+        //info.address.equalsIgnoreCase("cosmicsky.net") && info.name.equalsIgnoreCase("cosmic sky");
     }
 
     public static boolean isOnCosmicSky() {

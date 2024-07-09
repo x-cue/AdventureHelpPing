@@ -1,6 +1,7 @@
 package com.xcue.lib.ping;
 
 import com.xcue.lib.Adventure;
+import com.xcue.lib.AdventureSession;
 import com.xcue.lib.render.RenderHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.util.math.BlockPos;
@@ -53,16 +54,17 @@ public final class Ping {
     }
 
     private int lifetime;
-    private ZonedDateTime firstRender;
+    // If unset, it will wait for first render to "start the timer"
+    private ZonedDateTime timeSpawned = ZonedDateTime.now();
 
     public void render(WorldRenderContext ctx, Consumer<Ping> killCb) {
-        RenderHelper.renderWaypoint(ctx, this.pos, new float[]{1F, 0F, 0F}, 0.5F, true);
+        if (AdventureSession.isStarted()) {
+            RenderHelper.renderWaypoint(ctx, this.pos, new float[]{1F, 0F, 0F}, 0.5F, true);
 
-        if (firstRender == null) firstRender = ZonedDateTime.now();
-
-        if (ZonedDateTime.now().isAfter(firstRender.plusSeconds(5))) {
-            // Cleanup function
-            killCb.accept(this);
+            if (ZonedDateTime.now().isAfter(timeSpawned.plusSeconds(5))) {
+                // Cleanup function
+                killCb.accept(this);
+            }
         }
     }
 }

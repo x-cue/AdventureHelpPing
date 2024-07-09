@@ -14,10 +14,8 @@ import java.text.DecimalFormat;
 
 public class AdventureHelpPing implements ClientTickEvents.EndTick {
     private static final KeyBinding keyBinding;
-    private static final DecimalFormat formatter;
 
     static {
-        formatter = new DecimalFormat("#.##");
         keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "Adventure Ping", // The translation key of the keybinding's name
                 InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
@@ -39,11 +37,11 @@ public class AdventureHelpPing implements ClientTickEvents.EndTick {
 
                 BlockPos pos = p.getBlockPos();
 
-                String helpMsg = String.format("(!) Help in %s at %d | %d | %d %s / HP: %s",
+                String helpMsg = String.format("(!) Help in %s at %d | %d | %d %s / HP: %d",
                         AdventureSession.getAdventure().getName(),
                         pos.getX(), pos.getY(), pos.getZ(),
                         p.getMovementDirection().getName().toUpperCase(),
-                        formatter.format(p.getHealth())
+                        Math.round(p.getHealth())
                 );
 
                 p.networkHandler.sendChatMessage(helpMsg);

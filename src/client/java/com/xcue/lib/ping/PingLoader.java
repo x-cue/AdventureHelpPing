@@ -1,29 +1,38 @@
 package com.xcue.lib.ping;
 
+import com.xcue.lib.Adventure;
+import com.xcue.lib.AdventureSession;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class PingLoader {
     private PingLoader() {
 
     }
 
-    private static Map<String, Ping> pings;
+    private static Map<Adventure, Map<String, Ping>> pings;
 
     static {
         pings = new HashMap<>();
+        for (Adventure adv : Adventure.values()) {
+            pings.put(adv, new HashMap<>());
+        }
     }
 
     public static void addPing(Ping ping, int seconds) {
-        pings.put(ping.ign(), ping);
         ping.setLifetime(seconds);
+        pings.get(ping.adv()).put(ping.ign(), ping);
     }
 
+    // Renders pings only from the player's current adventure
     public static void renderPings(WorldRenderContext context) {
-        pings.values().forEach(x -> x.render(context, ping -> {
-            pings.remove(ping.ign());
-        }));
+        Map<String, Ping> advPings = PingLoader.pings.getOrDefault(AdventureSession.getAdventure(), new HashMap<>());
+        List<Ping> pings = new ArrayList<>(advPings.values());
+
+        for (Ping ping : pings) {
+            ping.render(context, p -> advPings.remove(ping.ign()));
+        }
     }
 }

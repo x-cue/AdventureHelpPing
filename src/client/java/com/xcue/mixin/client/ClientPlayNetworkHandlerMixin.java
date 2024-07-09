@@ -6,8 +6,10 @@ import com.xcue.lib.ping.Ping;
 import com.xcue.lib.ping.PingInfo;
 import com.xcue.lib.ping.PingLoader;
 import joptsimple.util.RegexMatcher;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.s2c.play.*;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import org.spongepowered.asm.mixin.Mixin;
@@ -41,21 +43,20 @@ public class ClientPlayNetworkHandlerMixin {
             return;
         }
 
-        Pattern pingP = Pattern.compile(String.format("^(?i)\\(!\\) Help in %s at (\\d+) \\| (\\d+) \\| (\\d+) (WEST|NORTH|EAST|SOUTH) \\/ HP: (\\d{1,2})$", advRegEx));
+        Pattern pingP = Pattern.compile(String.format("^(?i).* (\\w+)\\: \\(!\\) Help in %s at (-?\\d+) \\| (\\d+) \\| (-?\\d+) (WEST|NORTH|EAST|SOUTH) \\/ HP: (\\d{1,2})$", advRegEx));
         Matcher pingM = pingP.matcher(msg);
         if (pingM.matches()) {
-            Adventure adv = Adventure.forName(pingM.group(1));
-            int x = Integer.parseInt(pingM.group(2));
-            int y = Integer.parseInt(pingM.group(3));
-            int z = Integer.parseInt(pingM.group(4));
-            Direction dir = Direction.byName(pingM.group(5));
-            double hp = Double.parseDouble(pingM.group(6));
-
-            // TODO get ign
+            String ign = pingM.group(1);
+            Adventure adv = Adventure.forName(pingM.group(2));
+            int x = Integer.parseInt(pingM.group(3));
+            int y = Integer.parseInt(pingM.group(4));
+            int z = Integer.parseInt(pingM.group(5));
+            Direction dir = Direction.byName(pingM.group(6));
+            double hp = Double.parseDouble(pingM.group(7));
 
             // Spawn ping for X seconds, by IGN
-            Ping ping = new Ping(adv, new BlockPos(x, y, z), dir, "placeholder", hp);
-            PingLoader.addPing(ping, 5);
+            Ping ping = new Ping(adv, new BlockPos(x, y -1, z), dir, ign, hp);
+            PingLoader.addPing(ping, 10);
         }
     }
 }

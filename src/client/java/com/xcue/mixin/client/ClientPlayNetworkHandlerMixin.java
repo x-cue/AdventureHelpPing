@@ -57,6 +57,7 @@ public class ClientPlayNetworkHandlerMixin {
             // Spawn ping for X seconds, by IGN
             Ping ping = new Ping(adv, new BlockPos(x, y -1, z), dir, ign, hp);
             PingLoader.addPing(ping, 10);
+            // TODO Make a waypoint class that Ping extends
         }
     }
 }
